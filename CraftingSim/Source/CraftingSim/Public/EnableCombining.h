@@ -10,6 +10,7 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CRAFTINGSIM_API UEnableCombining : public UActorComponent
 {
 	GENERATED_BODY()
+		//refresh senpai
 
 public:	
 	// Sets default values for this component's properties
@@ -29,6 +30,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<AActor*> CombinableActors;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<APlayerController*> Players;
 		
 	
 };
