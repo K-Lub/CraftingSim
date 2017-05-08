@@ -19,10 +19,6 @@ UEnableCombining::UEnableCombining()
 void UEnableCombining::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Players.Add(GetWorld()->GetFirstPlayerController());
-
-	// ...
 	
 }
 
@@ -31,6 +27,7 @@ void UEnableCombining::BeginPlay()
 void UEnableCombining::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	// ...
+
+	AreaVolume->GetOverlappingActors(ActorsOnTable);
 }
 

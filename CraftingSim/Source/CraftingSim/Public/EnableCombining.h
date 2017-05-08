@@ -29,10 +29,8 @@ private:
 	ATriggerVolume* AreaVolume;
 
 	UPROPERTY(VisibleAnywhere)
-	TArray<AActor*> CombinableActors;
-
-	UPROPERTY(VisibleAnywhere)
-	TArray<APlayerController*> Players;
+	TArray<AActor*> ActorsOnTable;
 		
+
 	
 };
