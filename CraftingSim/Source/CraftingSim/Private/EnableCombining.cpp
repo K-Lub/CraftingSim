@@ -21,6 +21,7 @@ void UEnableCombining::BeginPlay()
 	Super::BeginPlay();
 
 	Players.Add(GetWorld()->GetFirstPlayerController());
+
 	// ...
 	
 }
