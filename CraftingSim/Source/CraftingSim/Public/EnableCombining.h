@@ -5,6 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "EnableCombining.generated.h"
 
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCombineRequest);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CRAFTINGSIM_API UEnableCombining : public UActorComponent
@@ -23,6 +24,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	//UPROPERTY(BlueprintAssignable)
+		//FOnCombineRequest OnCombineRequest;
 
 private:
 	UPROPERTY(EditAnywhere)

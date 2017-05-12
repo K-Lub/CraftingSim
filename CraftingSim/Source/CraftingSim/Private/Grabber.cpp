@@ -40,7 +40,7 @@ void UGrabber::FindPhysicsHandleComponent() {
 	//Look for attached physics handle
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	if (!PhysicsHandle) {
-		UE_LOG(LogTemp, Error, TEXT("PhysicsHanlde not found on %s"), *GetOwner()->GetName());
+		UE_LOG(LogTemp, Error, TEXT("PhysicsHandle not found on %s"), *GetOwner()->GetName());
 	}
 }
 void UGrabber::FindInputComponent() {

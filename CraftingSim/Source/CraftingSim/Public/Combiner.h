@@ -3,17 +3,17 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "Grabber.generated.h"
+#include "Combiner.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CRAFTINGSIM_API UGrabber : public UActorComponent
+class CRAFTINGSIM_API UCombiner : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UGrabber();
+	UCombiner();
 
 protected:
 	// Called when the game starts
@@ -23,26 +23,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION()
+	void YourFunction(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	void SetIsReadyToCombine(bool);
+
 
 private:
-	//how far the player can reach in cm
-	float Reach = 200.f;
-
-	UPhysicsHandleComponent* PhysicsHandle = nullptr;
-	UInputComponent* InputComponent = nullptr;
-
-	//ray cast and grab object
-	void Grab();
-	void Release();
-		
-	void FindPhysicsHandleComponent();
-	void FindInputComponent();
-
-	FVector GetReachLineEnd() const;
-	FVector GetReachLineStart() const;
-
-	FHitResult GetFirstPhysicsBodyInReach() const;
-
-
-	
+	bool isReadyToCombine = false;
+	UStaticMeshComponent* Root;
 };

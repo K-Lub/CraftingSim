@@ -2,6 +2,8 @@
 
 #include "CraftingSim.h"
 #include "EnableCombining.h"
+#include "CombinableObject.h"
+#include "Combiner.h"
 
 
 // Sets default values for this component's properties
@@ -27,7 +29,12 @@ void UEnableCombining::BeginPlay()
 void UEnableCombining::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 	AreaVolume->GetOverlappingActors(ActorsOnTable);
+	for (AActor* Actor : ActorsOnTable) {
+		//OnCombineRequest.Broadcast();
+		ACombinableObject* Combiner = Cast<ACombinableObject>(Actor);
+		if(Combiner)
+			Combiner->SetIsReadyToCombine(true);
+	}
 }
 
