@@ -38,7 +38,7 @@ private:
 
 	bool isReadyToCombine = false;
 
-	UStaticMeshComponent* Child;
+	UStaticMeshComponent* Child = nullptr;
 
 	UStaticMeshComponent* RootComponent;	
 
@@ -50,5 +50,5 @@ private:
 
 	void AddDynamicHit(UStaticMeshComponent* Comp);
 
-	void CreateAddOn(UStaticMeshComponent* Parent, ACombinableObject* TryCombine, FName Name);
+	void CreateAddOn(UStaticMeshComponent*, ACombinableObject*, FName, UStaticMeshComponent*);
 };

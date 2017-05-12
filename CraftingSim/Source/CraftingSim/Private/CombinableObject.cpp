@@ -48,7 +48,12 @@ void ACombinableObject::AddDynamicHit(UStaticMeshComponent* Comp) {
 	Comp->OnComponentHit.AddDynamic(this, &ACombinableObject::AddComponent);
 }
 
-void ACombinableObject::CreateAddOn(UStaticMeshComponent* Parent, ACombinableObject* TryCombine, FName Name) {
+void ACombinableObject::CreateAddOn(
+	UStaticMeshComponent* Parent, 
+	ACombinableObject* Piece, 
+	FName Name, 
+	UStaticMeshComponent* ChildOf) 
+{
 	UStaticMeshComponent* AddOn = NewObject<UStaticMeshComponent>(
 		this,
 		UStaticMeshComponent::StaticClass(),
@@ -63,16 +68,39 @@ void ACombinableObject::CreateAddOn(UStaticMeshComponent* Parent, ACombinableObj
 
 		AddOn->AttachToComponent(Parent, FAttachmentTransformRules::KeepRelativeTransform, Name);
 		AddOn->SetStaticMesh(Cast<UStaticMeshComponent>(
-			TryCombine->GetRootComponent())->GetStaticMesh());
+			Piece->GetRootComponent())->GetStaticMesh());
 
 		AddOn->SetCollisionProfileName(FName("PhysicsActor"));
 		AddOn->SetNotifyRigidBodyCollision(true);
 
 		Child = AddOn;
+		AddDynamicHit(AddOn);
 		//Guard->WeldTo(Root, FName("Front"));
 		//Guard->SetSimulatePhysics(true);
 
-		TryCombine->Destroy();
+		Piece->Destroy();
+	}
+	if (ChildOf != nullptr) {
+		UStaticMeshComponent* AddOn2 = NewObject<UStaticMeshComponent>(
+			this,
+			UStaticMeshComponent::StaticClass(),
+			FName("Blade")
+			);
+
+		if (AddOn2)
+		{
+			AddOn2->RegisterComponent();
+			AddOn2->SetRelativeLocation(FVector(0, 0, 0));
+			AddOn2->SetRelativeRotation(FRotator(0, 0, 0));
+
+			AddOn2->AttachToComponent(Child, FAttachmentTransformRules::KeepRelativeTransform, FName("Blade"));
+			AddOn2->SetStaticMesh(ChildOf->GetStaticMesh());
+
+			AddOn2->SetCollisionProfileName(FName("PhysicsActor"));
+			AddOn2->SetNotifyRigidBodyCollision(true);
+
+			AddDynamicHit(AddOn2);
+		}
 	}
 }
 
@@ -81,7 +109,12 @@ void ACombinableObject::SetIsReadyToCombine(bool isReady) {
 	UE_LOG(LogTemp, Warning, TEXT("%s: Ready to Combine"), *GetName());
 }
 
-void ACombinableObject::AddComponent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit) {
+void ACombinableObject::AddComponent(
+	UPrimitiveComponent* HitComponent, 
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComponent, 
+	FVector NormalImpulse, 
+	const FHitResult& Hit) {
 
 	//if (OtherActor->GetClass() == TSubclassOf<ACombinableObject>()) {
 		
@@ -99,65 +132,22 @@ void ACombinableObject::AddComponent(UPrimitiveComponent* HitComponent, AActor* 
 					if (Type == ETypeEnum::TE_Handle) {
 						if (OtherType == ETypeEnum::TE_Guard) {
 							if(!Child){
-								CreateAddOn(RootComponent, TryCombine, FName("Guard"));
+								CreateAddOn(RootComponent, TryCombine, FName("Guard"), TryCombine->Child);
 							}
 						}
 						else if (OtherType == ETypeEnum::TE_Weapon) {
 							if (Child) {
-								UStaticMeshComponent* AddOn = NewObject<UStaticMeshComponent>(
-									this,
-									UStaticMeshComponent::StaticClass(),
-									FName("Weapon")
-									);
-
-								if (AddOn)
-								{
-									AddOn->RegisterComponent();
-									AddOn->SetRelativeLocation(FVector(0, 0, 0));
-									AddOn->SetRelativeRotation(FRotator(0, 0, 0));
-
-									AddOn->AttachToComponent(Child, FAttachmentTransformRules::KeepRelativeTransform, FName("Sword"));
-									AddOn->SetStaticMesh(Cast<UStaticMeshComponent>(
-										TryCombine->GetRootComponent())->GetStaticMesh());
-
-									AddOn->SetCollisionProfileName(FName("PhysicsActor"));
-									AddOn->SetNotifyRigidBodyCollision(true);
-
-									Child = AddOn;
-
-									//Guard->WeldTo(Root, FName("Front"));
-									//Guard->SetSimulatePhysics(true);
-
-									OtherActor->Destroy();
-								}
+								CreateAddOn(Child, TryCombine, FName("Blade"), TryCombine->Child);
 							}
 							else if(!Child) {
-								UStaticMeshComponent* AddOn = NewObject<UStaticMeshComponent>(
-									this,
-									UStaticMeshComponent::StaticClass(),
-									FName("Weapon")
-									);
-
-								if (AddOn)
-								{
-									AddOn->RegisterComponent();
-									AddOn->SetRelativeLocation(FVector(0, 0, 0));
-									AddOn->SetRelativeRotation(FRotator(0, 0, 0));
-
-									AddOn->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform, FName("Sword"));
-									AddOn->SetStaticMesh(Cast<UStaticMeshComponent>(
-										TryCombine->GetRootComponent())->GetStaticMesh());
-
-									AddOn->SetCollisionProfileName(FName("PhysicsActor"));
-									AddOn->SetNotifyRigidBodyCollision(true);
-
-									Child = AddOn;
-
-									//Guard->WeldTo(Root, FName("Front"));
-									//Guard->SetSimulatePhysics(true);
-
-									OtherActor->Destroy();
-								}
+								CreateAddOn(RootComponent, TryCombine, FName("Blade"), TryCombine->Child);
+							}
+						}
+					}
+					if (Type == ETypeEnum::TE_Guard) {
+						if (OtherType == ETypeEnum::TE_Weapon) {
+							if (!Child) {
+								CreateAddOn(RootComponent, TryCombine, FName("Blade"), TryCombine->Child);
 							}
 						}
 					}
