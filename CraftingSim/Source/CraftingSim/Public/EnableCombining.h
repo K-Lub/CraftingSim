@@ -29,12 +29,15 @@ public:
 		//FOnCombineRequest OnCombineRequest;
 
 private:
-	UPROPERTY(EditAnywhere)
-	ATriggerVolume* AreaVolume;
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<AActor*> ActorsOnTable;
 		
+	UFUNCTION(BlueprintCallable)
+	void OnBeginTriggerOverlap(class AActor* OtherActor);
+
+	UFUNCTION(BlueprintCallable)
+	void OnEndTriggerOverlap(class AActor* OtherActor);
 
 	
 };

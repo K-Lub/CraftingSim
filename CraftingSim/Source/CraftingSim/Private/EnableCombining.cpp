@@ -21,7 +21,6 @@ UEnableCombining::UEnableCombining()
 void UEnableCombining::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 
@@ -29,12 +28,21 @@ void UEnableCombining::BeginPlay()
 void UEnableCombining::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	AreaVolume->GetOverlappingActors(ActorsOnTable);
-	for (AActor* Actor : ActorsOnTable) {
-		//OnCombineRequest.Broadcast();
-		ACombinableObject* Combiner = Cast<ACombinableObject>(Actor);
-		if(Combiner)
-			Combiner->SetIsReadyToCombine(true);
+}
+
+void UEnableCombining::OnBeginTriggerOverlap(class AActor* OtherActor){
+	auto* Temp = Cast<ACombinableObject>(OtherActor);
+	if (Temp){
+		//UE_LOG(LogTemp, Warning, TEXT("Combine"));
+		Temp->SetIsReadyToCombine(true);
+	}
+}
+
+void UEnableCombining::OnEndTriggerOverlap(class AActor* OtherActor) {
+	auto* Temp = Cast<ACombinableObject>(OtherActor);
+	if (Temp) {
+		//UE_LOG(LogTemp, Warning, TEXT("Combine"));
+		Temp->SetIsReadyToCombine(false);
 	}
 }
 

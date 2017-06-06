@@ -8,9 +8,12 @@
 UENUM(BlueprintType)		//"BlueprintType" is essential to include
 enum class ETypeEnum : uint8
 {
-	TE_Handle 	UMETA(DisplayName = "Handle"),
-	TE_Guard 	UMETA(DisplayName = "Guard"),
-	TE_Weapon 	UMETA(DisplayName = "Weapon")
+	TE_Handle 		UMETA(DisplayName = "Handle"),
+	TE_Guard 		UMETA(DisplayName = "Guard"),
+	TE_Weapon 		UMETA(DisplayName = "Weapon"),
+	TE_ChairBase 	UMETA(DisplayName = "Chair Base"),
+	TE_ChairLeg		UMETA(DisplayName = "Chair Leg"),
+	TE_ChairBack 	UMETA(DisplayName = "Chair Back")
 };
 
 UCLASS()
@@ -29,8 +32,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	UFUNCTION()
-	void AddComponent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 	
 	void SetIsReadyToCombine(bool isReady);
 
@@ -38,7 +39,7 @@ private:
 
 	bool isReadyToCombine = false;
 
-	UStaticMeshComponent* Child = nullptr;
+	int AttachedLegs = 0;
 
 	UStaticMeshComponent* RootComponent;	
 
@@ -48,7 +49,19 @@ private:
 	UPROPERTY(EditAnywhere, Category = Setup)
 	ETypeEnum Type;
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void AddComponent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION(Server, Reliable, WithValidation)
 	void AddDynamicHit(UStaticMeshComponent* Comp);
 
-	void CreateAddOn(UStaticMeshComponent*, ACombinableObject*, FName, UStaticMeshComponent*);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void CreateAddOn(UStaticMeshComponent* Parent, ACombinableObject* Piece, FName Name);
+
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void ClientsAddComponent(UStaticMeshComponent* Parent, ACombinableObject* Piece, FName Name);
+
+	UFUNCTION(NetMulticast, Unreliable)
+		void ClientsAddComponentHelper(UStaticMeshComponent* Parent, UStaticMeshComponent* Piece, FName Name);
 };

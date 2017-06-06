@@ -24,6 +24,9 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 
+	
+
+
 private:
 	//how far the player can reach in cm
 	float Reach = 200.f;
@@ -31,9 +34,29 @@ private:
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 	UInputComponent* InputComponent = nullptr;
 
-	//ray cast and grab object
-	void Grab();
-	void Release();
+	
+
+	UFUNCTION(BlueprintCallable)
+		float GetReach();
+
+	UFUNCTION(BlueprintCallable)
+		void Grab();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerGrab();
+
+	UFUNCTION(NetMulticast, Reliable)
+		void ClientsGrab(UPrimitiveComponent* ComponentToGrab);
+
+
+	UFUNCTION(BlueprintCallable)
+		void Release();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRelease();
+
+	UFUNCTION(NetMulticast, Reliable)
+		void ClientsRelease(UPrimitiveComponent* ComponentToGrab);
 		
 	void FindPhysicsHandleComponent();
 	void FindInputComponent();
@@ -43,6 +66,10 @@ private:
 
 	FHitResult GetFirstPhysicsBodyInReach() const;
 
+	UFUNCTION(BlueprintCallable)
+	void IncreaseReach();
 
+	UFUNCTION(BlueprintCallable)
+	void DecreaseReach();
 	
 };
